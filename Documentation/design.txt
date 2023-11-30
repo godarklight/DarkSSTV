@@ -1,0 +1,1 @@
+DarkSSTV is a 4QAM 48000khz 512 sample symbol data rate, 2.5khz wide.
