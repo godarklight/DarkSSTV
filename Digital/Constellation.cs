@@ -6,12 +6,9 @@ using Gtk;
 
 namespace DarkSSTV;
 
-class Constellation
+static class Constellation
 {
-    public byte[] data;
-    public bool morse;
-
-    public Complex[] GetData()
+    public static Complex[] GetData(bool morse, bool startFrame, byte[] data)
     {
         Complex[] retVal = new Complex[512];
         retVal[3] = 2.0 * Complex.One;
@@ -43,7 +40,7 @@ class Constellation
         return retVal;
     }
 
-    private Complex Qam4Map(bool bit1, bool bit2)
+    private static Complex Qam4Map(bool bit1, bool bit2)
     {
         //00 = 1,1
         //01 = -1,1
@@ -51,19 +48,19 @@ class Constellation
         //11 = 1,-1
         if (!bit2 && !bit1)
         {
-            return new Complex(1, 1);
+            return new Complex(0.707, 0.707);
         }        
         if (!bit2 && bit1)
         {
-            return new Complex(-1, 1);
+            return new Complex(-0.707, 0.707);
         }
         if (bit2 && !bit1)
         {
-            return new Complex(-1, -1);
+            return new Complex(-0.707, -0.707);
         }
         if (bit2 && bit1)
         {
-            return new Complex(1, -1);
+            return new Complex(0.707, -0.707);
         }
         return Complex.Zero;
     }

@@ -1,1 +1,30 @@
 DarkSSTV is a 4QAM 48000khz 512 sample symbol data rate, 2.5khz wide.
+
+Each frame is 100 fft symbols long.
+
+Each fft symbol holds 5 bytes of data
+
+FFT layout:
+3: Pilot tone at 0 degrees normally, and 180 degrees on the start of a frame
+7: Morse carrier to ID
+8-29: 4QAM data bits.
+
+Frame 0 layout (Retransmitted every 20 frames):
+short: Frame ID
+short: Length of sequence
+short: Type of Data 1 = file, 2 = sstv
+int: Length of viterbi data
+byte: Length of callsign
+string: Callsign
+byte: Length of filename
+string: Filename
+byte: Length of comment
+string: Comment Data
+(if sstv, int height int width)
+
+
+
+Frame 1+ layout:
+01: Frame ID
+23: Length of sequence
+

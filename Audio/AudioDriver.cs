@@ -6,7 +6,7 @@ namespace DarkSSTV
 {
 
 
-    class AudioDriver
+    class AudioDriver : IAudio
     {
         Stream audioStream;
         double[] sourceBuffer = new double[16];
@@ -14,8 +14,8 @@ namespace DarkSSTV
         int sourceWritePos = 0;
         int sinkReadPos = 0;
         AutoResetEvent okRead = new AutoResetEvent(false);
-        public Action<double[]> source;
-        public Action<double[]> sink;
+        Action<double[]> source;
+        Action<double[]> sink;
 
         public AudioDriver()
         {
@@ -68,6 +68,16 @@ namespace DarkSSTV
                 }
             }
             return StreamCallbackResult.Continue;
+        }
+
+        public void SetSink(Action<double[]> sink)
+        {
+            this.sink = sink;
+        }
+
+        public void SetSource(Action<double[]> source)
+        {
+            this.source = source;
         }
 
         public void Stop()

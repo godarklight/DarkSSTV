@@ -91,6 +91,9 @@ class Morse
             pos++;
             if (pos >= dataToSend.Length)
             {
+                charOnLeft = 0;
+                charTotalLeft = 20;
+                pos = -1;
                 return false;                
             }
             char read = dataToSend[pos];

@@ -25,8 +25,6 @@ namespace DarkSSTV
 
         private void Button1_Clicked(object sender, EventArgs a)
         {
-            Encoder te = new Encoder();
-            te.Run();
         }
     }
 }

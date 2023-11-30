@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using Gtk;
 
 namespace DarkSSTV
@@ -8,8 +10,15 @@ namespace DarkSSTV
         [STAThread]
         public static void Main(string[] args)
         {
-            Encoder te = new Encoder();
-            te.Run();
+            byte[] data = File.ReadAllBytes("input.jpg");
+            //AudioDriver audio = new AudioDriver();
+            WavDriver audio = new WavDriver();
+            Morse morse = new Morse("VK4GDL TESTING DARKSSTV");
+            FrameEncoder frame = new FrameEncoder();
+            frame.Encode(data, "VK4GDL", "meme.png", "haha funny");
+            Encoder encoder = new Encoder(morse, frame, audio);
+            encoder.Run();
+            audio.Run();
 
             Application.Init();
 
@@ -22,7 +31,7 @@ namespace DarkSSTV
             win.Show();
             Application.Run();
 
-            te.Stop();
+            audio.Stop();
         }
     }
 }
