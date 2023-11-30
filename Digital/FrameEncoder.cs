@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
-using GLib;
 
 namespace DarkSSTV;
 class FrameEncoder
@@ -19,11 +19,11 @@ class FrameEncoder
     public int Encode(byte[] data, string callsign, string filename, string comment)
     {
         int dataLeft = data.Length;
-        int totalFrames = (int)Math.Ceiling(data.Length / 496.0);
+        int totalFrames = (int)Math.Ceiling(data.Length / 246.0);
         byte[] callsignbytes = Encoding.UTF8.GetBytes(callsign);
         byte[] filenamebytes = Encoding.UTF8.GetBytes(filename);
         byte[] commentbytes = Encoding.UTF8.GetBytes(comment);
-        byte[] header = new byte[500];
+        byte[] header = new byte[250];
         header[2] = (byte)((totalFrames >> 8) & 0xFF);
         header[3] = (byte)(totalFrames & 0xFF);
         header[4] = 1; //1 file 2 sstv
@@ -39,31 +39,27 @@ class FrameEncoder
         offset += filenamebytes.Length;
         header[11 + offset] = (byte)commentbytes.Length;
         Array.Copy(commentbytes, 0, header, 12 + offset, commentbytes.Length);
-        frames.Add(header);
-
+        frames.Add(Viterbi.Encode(header));
 
         int frameID = 1;
         while (dataLeft > 0)
         {
-            byte[] b248 = new byte[248];
-            if (dataLeft >= 248)
+            byte[] b250 = new byte[250];
+            if (dataLeft >= 246)
             {
-                Array.Copy(data, data.Length - dataLeft, b248, 0, 248);
+                Array.Copy(data, data.Length - dataLeft, b250, 4, 246);
             }
             else
             {
-                Array.Copy(data, data.Length - dataLeft, b248, 0, dataLeft);
+                Array.Copy(data, data.Length - dataLeft, b250, 4, dataLeft);
             }
-
-            byte[] b500 = new byte[500];
-            b500[0] = (byte)((frameID >> 8) & 0xFF);
-            b500[1] = (byte)(frameID & 0xFF);
-            b500[2] = (byte)((totalFrames >> 8) & 0xFF);
-            b500[3] = (byte)(totalFrames & 0xFF);
-            byte[] viterbiData = Viterbi.Encode(b248);
-            Array.Copy(viterbiData, 0, b500, 0, 496);
-            frames.Add(b500);
-            dataLeft -= 248;
+            b250[0] = (byte)((frameID >> 8) & 0xFF);
+            b250[1] = (byte)(frameID & 0xFF);
+            b250[2] = (byte)((totalFrames >> 8) & 0xFF);
+            b250[3] = (byte)(totalFrames & 0xFF);
+            byte[] viterbiData = Viterbi.Encode(b250);
+            frames.Add(viterbiData);
+            dataLeft -= 246;
             frameID++;
         }
 

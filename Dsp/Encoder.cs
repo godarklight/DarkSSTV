@@ -105,7 +105,7 @@ class Encoder
         }
         morseKeyLeft--;
         Array.Copy(frameData, frameData.Length - frameDataLeft, b5, 0, 5);
-        Complex[] fftInput = Constellation.GetData(morseState, frameDataLeft == 500, b5);
+        Complex[] fftInput = Constellation.Encode(morseState, frameDataLeft == 500, b5);
         frameDataLeft -= 5;
         audioData = FFT.CalcIFFT(fftInput);
     }
