@@ -11,6 +11,14 @@ class WavDriver : IAudio
     Action<double[]> source;
     FileStream sourceData;
     int sourceLeft = 0;
+    string inputName;
+    string outputName;
+
+    public WavDriver(string inputName, string outputName)
+    {
+        this.inputName = inputName;
+        this.outputName = outputName;
+    }
 
     public void SetSink(Action<double[]> sink)
     {
@@ -36,9 +44,9 @@ class WavDriver : IAudio
                 this.sinkData.WriteByte((byte)((s16 >> 8) & 0xFF));
             }
         }
-        if (File.Exists("input.wav"))
+        if (File.Exists(inputName))
         {
-            sourceData = new FileStream("input.wav", FileMode.Open);
+            sourceData = new FileStream(inputName, FileMode.Open);
             byte[] b4 = new byte[4];
             sourceData.Seek(8, SeekOrigin.Begin);
             sourceData.Read(b4, 0, 4);
@@ -89,13 +97,12 @@ class WavDriver : IAudio
     {
         if (sinkData.Position > 0)
         {
-            string filename = "output.wav";
             byte[] b4 = new byte[4];
-            if (File.Exists(filename))
+            if (File.Exists(outputName))
             {
-                File.Delete(filename);
+                File.Delete(outputName);
             }
-            using (FileStream fs = new FileStream(filename, FileMode.Create))
+            using (FileStream fs = new FileStream(outputName, FileMode.Create))
             {
                 //RIFF header
                 Encoding.ASCII.GetBytes("RIFF", 0, 4, b4, 0);

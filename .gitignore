@@ -3,3 +3,5 @@ obj/
 *.wav
 *.png
 *.jpg
+output*
+constellation*

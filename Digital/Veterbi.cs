@@ -47,7 +47,7 @@ public static class Viterbi
         return output;
     }
 
-    public static byte[] Decode(byte[] input)
+    public static byte[] Decode(byte[] input, out int errors)
     {
         int inputState = 0;
         int inputPos = 0;
@@ -155,6 +155,7 @@ public static class Viterbi
             outputByte |= (path[i * 8 + 7] & 0b00100000) << 2;
             output[i] = (byte)outputByte;
         }
+        errors = lowest;
         return output;
     }
 

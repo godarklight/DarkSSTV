@@ -15,10 +15,24 @@ class FrameDecoder
     string callsign = "";
     string filename = "";
     string comment = "";
+    int totalErrors = 0;
+    int symbolID = 0;
 
     public void FrameEvent(Complex[] samples)
     {
         Complex[] fft = FFT.CalcFFT(samples);
+        using (StreamWriter sw = new StreamWriter($"constellations/{symbolID}.csv"))
+        {
+            for (int i = 3; i < 30; i++)
+            {
+                if (i == 4 || i == 5 || i == 6 || i == 8 || i == 9)
+                {
+                    continue;
+                }
+                sw.WriteLine($"{i},{fft[i].Real},{fft[i].Imaginary}");
+            }
+        }
+        symbolID++;
         Constellation.Decode(fft, out bool morse, out bool startFrame, out byte[] data);
         if (startFrame)
         {
@@ -33,7 +47,8 @@ class FrameDecoder
         writePos += 5;
         if (writePos == 500)
         {
-            byte[] b250 = Viterbi.Decode(b500);
+            byte[] b250 = Viterbi.Decode(b500, out int errors);
+            totalErrors += errors;
             int frameID = b250[0] << 8 | b250[1];
             int frameTotal = b250[2] << 8 | b250[3];
             if (frameID == 0)
@@ -78,10 +93,11 @@ class FrameDecoder
                     {
                         Array.Copy(b250, 4, fileData, writePos, fileData.Length % 246);
                         File.WriteAllBytes(filename, fileData);
+                        Console.WriteLine($"Total errors {totalErrors}");
                     }
                 }
             }
-            Console.WriteLine($"RX frame {frameID}");
+            Console.WriteLine($"RX frame {frameID} errors {errors}");
             receiving = false;
         }
     }

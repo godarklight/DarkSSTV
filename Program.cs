@@ -11,7 +11,7 @@ namespace DarkSSTV
         public static void Main(string[] args)
         {
             //AudioDriver audio = new AudioDriver();
-            WavDriver audio = new WavDriver();
+            WavDriver audio = new WavDriver("input.wav", "output2.wav");
             //Encode path
             /*
             byte[] data = File.ReadAllBytes("input.jpg");
